@@ -1,24 +1,52 @@
-'use client'
+"use client";
 
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import CustomWalletButton from "./custom-wallet-button";
 
-export default function Navigation() {
+const Navbar = () => {
+  const [showNavbar, setShowNavbar] = useState(true);
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    setHydrated(true);
+
+    let lastScrollY = window.scrollY;
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      // Show when scrolling up, hide when scrolling down
+      setShowNavbar(currentScrollY <= lastScrollY || currentScrollY <= 50);
+
+      lastScrollY = currentScrollY;
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const navbarHeight = hydrated && !showNavbar ? "h-0" : "h-[70px]";
+  const navbarOpacity = hydrated && !showNavbar ? "opacity-0" : "opacity-100";
+
   return (
-    <nav className="border-b border-border bg-white sticky top-0 z-50 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          <Link href="/" className="text-xl font-bold text-trust-dark-purple">
-            TrustCrow
-          </Link>
-          <Button 
-            variant="outline"
-            className="border-primary text-primary hover:bg-secondary"
-          >
-            Connect Wallet
-          </Button>
-        </div>
+    <div
+      className={`fixed top-0 left-0 w-full bg-white z-50 border-b border-gray-200 transition-all duration-300 ease-in-out overflow-hidden ${navbarHeight}`}
+    >
+      <div
+        className={`flex justify-between items-center px-10 max-md:px-5 transition-all duration-300 ease-in-out ${navbarOpacity} h-full`}
+      >
+        {/* Logo / Brand */}
+        <Link href="/" className="text-2xl font-bold text-[#180D39]">
+          TrustCrow
+        </Link>
+
+        {/* Wallet Button */}
+        <CustomWalletButton />
       </div>
-    </nav>
-  )
-}
+    </div>
+  );
+};
+
+export default Navbar;

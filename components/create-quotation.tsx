@@ -48,12 +48,16 @@ export default function CreateQuotation() {
     setMilestones(milestones.filter(m => m.id !== id))
   }
 
-  const stakeAmount = totalValue && freelancerStake 
-    ? (Number(totalValue) * Number(freelancerStake)) / 100 
+  const stakeAmount = totalValue && freelancerStake
+    ? (Number(totalValue) * Number(freelancerStake)) / 100
     : 0
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto mt-[70px] px-4 sm:px-6 lg:px-8 py-8">
+      <Link href="/" className="text-primary hover:underline text-sm mb-4 inline-block">
+        ← Back to Dashboard
+      </Link>
+
       <h1 className="text-3xl font-bold text-foreground mb-2">Create Quotation</h1>
       <p className="text-muted-foreground mb-8">Set up a new escrow quotation with milestones</p>
 
@@ -134,7 +138,7 @@ export default function CreateQuotation() {
             {/* Milestones Section */}
             <div>
               <h3 className="text-lg font-semibold text-foreground mb-4">Milestones</h3>
-              
+
               {milestones.length === 0 ? (
                 <div className="border-2 border-dashed border-border rounded-lg p-8 text-center mb-4">
                   <p className="text-muted-foreground">No milestones yet</p>
