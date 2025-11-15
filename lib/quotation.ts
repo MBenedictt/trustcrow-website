@@ -6,6 +6,8 @@ import { Address, Abi } from "viem";
 // ─────────────────────────────────────────────────────────────
 
 export type HydratedMilestone = {
+    title: string;
+    description: string;
     percentBP: bigint;
     amount: bigint;
     status: number;
@@ -21,6 +23,8 @@ export type HydratedQuotation = {
     address: Address;
     seller: Address;
     buyer: Address;
+    projectTitle: string;
+    projectDescription: string;
     totalAmount: bigint;
     paidAt: bigint;
     createdAt: bigint;
@@ -29,8 +33,6 @@ export type HydratedQuotation = {
     currentMilestone: bigint;
     maxRevisions: number;
     milestones: HydratedMilestone[];
-
-    // NEW FIELDS
     sellerStakeAmount: bigint;
     stakeReleased: boolean;
 };
@@ -45,7 +47,11 @@ function getQuotationOrderMulticall(address: Address) {
         { address, abi: quotationAbi as Abi, functionName: "getOrder" },
         { address, abi: quotationAbi as Abi, functionName: "milestoneCount" },
 
-        // NEW — read stake fields
+        // NEW: project metadata
+        { address, abi: quotationAbi as Abi, functionName: "projectTitle" },
+        { address, abi: quotationAbi as Abi, functionName: "projectDescription" },
+
+        // stake
         { address, abi: quotationAbi as Abi, functionName: "sellerStakeAmount" },
         { address, abi: quotationAbi as Abi, functionName: "stakeReleased" },
     ];
@@ -70,6 +76,8 @@ export async function hydrateQuotation(address: Address): Promise<HydratedQuotat
     const [
         orderResult,
         milestoneCountResult,
+        projectTitleResult,
+        projectDescriptionResult,
         sellerStakeAmountResult,
         stakeReleasedResult
     ] = results.map(r => r.result);
@@ -110,10 +118,15 @@ export async function hydrateQuotation(address: Address): Promise<HydratedQuotat
             deadlineAt,
             note,
             buyerCancelConfirm,
-            sellerCancelConfirm
+            sellerCancelConfirm,
+            title,
+            description
         ] = milestoneResults[i] as any[];
 
         milestones.push({
+            title,
+            description,
+
             percentBP,
             amount,
             status: Number(mStatus),
@@ -130,6 +143,10 @@ export async function hydrateQuotation(address: Address): Promise<HydratedQuotat
         address,
         seller,
         buyer,
+
+        projectTitle: projectTitleResult as string,
+        projectDescription: projectDescriptionResult as string,
+
         totalAmount,
         paidAt,
         createdAt,
@@ -137,9 +154,9 @@ export async function hydrateQuotation(address: Address): Promise<HydratedQuotat
         clientWindow,
         currentMilestone,
         maxRevisions: Number(maxRevisions),
+
         milestones,
 
-        // NEW FIELDS
         sellerStakeAmount: sellerStakeAmountResult as bigint,
         stakeReleased: Boolean(stakeReleasedResult),
     };

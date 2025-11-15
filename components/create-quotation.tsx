@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { createQuotation } from '@/lib/create-quotation'
+import { toast } from "sonner"
 
 interface Milestone {
   id: string
@@ -52,37 +53,27 @@ export default function CreateQuotation() {
   const handleCreateQuotation = async () => {
     try {
       if (!clientWallet || !totalValue) {
-        alert("Missing required fields");
+        toast.error("Missing required fields");
         return;
       }
 
-      // --- STORE PROJECT DATA ---
-      sessionStorage.setItem(
-        "projectMeta",
-        JSON.stringify({
-          projectTitle,
-          projectDescription
-        })
-      );
+      if (!projectTitle || !projectDescription) {
+        toast.error("Project title & description are required");
+        return;
+      }
 
-      // --- STORE MILESTONES (TITLES + DESC) ---
-      sessionStorage.setItem(
-        "milestoneMeta",
-        JSON.stringify(
-          milestones.map(m => ({
-            id: m.id,
-            title: m.title,
-            description: m.description
-          }))
-        )
-      );
+      if (milestones.length === 0) {
+        toast.error("Please add at least 1 milestone");
+        return;
+      }
 
-      // --- basis points ---
+      const milestoneTitles = milestones.map(m => m.title);
+      const milestoneDescriptions = milestones.map(m => m.description);
+
       const milestonePercentsBP = milestones.map(m =>
         BigInt(m.percentage * 100)
       );
 
-      // --- deadline timestamps ---
       const milestoneDeadlines = milestones.map(m =>
         BigInt(Math.floor(new Date(m.dueDate).getTime() / 1000))
       );
@@ -90,29 +81,48 @@ export default function CreateQuotation() {
       const totalAmountWei = BigInt(Math.floor(Number(totalValue) * 1e18));
       const sellerStakeAmount = (totalAmountWei * BigInt(10)) / BigInt(100);
 
-      const clientWindowSeconds = BigInt(259200); // 3 days
+      const clientWindowSeconds = BigInt(259200);
       const maxRevisions = 1;
+
+      // Loading toast
+      const loadingToast = toast.loading("Creating quotation...");
 
       const txHash = await createQuotation({
         buyer: clientWallet as `0x${string}`,
         totalAmount: totalAmountWei,
+
+        projectTitle,
+        projectDescription,
+
         milestonePercentsBP,
         milestoneDeadlines,
+        milestoneTitles,
+        milestoneDescriptions,
+
         clientWindowSeconds,
         maxRevisions,
         sellerStakeAmount,
       });
 
-      alert(`Quotation created! Tx: ${txHash}`);
+      toast.success("Quotation successfully created!", {
+        description: `Tx: ${txHash.slice(0, 10)}...`,
+      });
 
-      // REDIRECT TO DASHBOARD + REFRESH
-      window.location.href = "/";
+      toast.dismiss(loadingToast);
 
-    } catch (err) {
+      // Small delay, then redirect
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 800);
+
+    } catch (err: any) {
       console.error(err);
-      alert("Failed to create quotation");
+      toast.error("Failed to create quotation", {
+        description: err?.message || "Unexpected error occurred",
+      });
     }
   };
+
 
   const stakeAmount = totalValue && freelancerStake
     ? (Number(totalValue) * Number(freelancerStake)) / 100

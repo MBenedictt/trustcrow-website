@@ -3,14 +3,14 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 import { Providers } from './providers';
+import { Toaster } from "sonner";
 
 const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: 'TrustCrow - Escrow Management',
-  description: 'Secure escrow quotations and milestone tracking',
-  generator: 'v0.app',
+  description: 'DeFi peer-to-peer escrow management for freelancers',
   icons: {
     icon: [
       {
@@ -39,6 +39,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`font-sans antialiased`}>
         <Providers>{children}</Providers>
+        <Toaster position="bottom-right" richColors />
         <Analytics />
       </body>
     </html>

@@ -29,8 +29,6 @@ export default function QuotationDetailPage() {
 
   const [mounted, setMounted] = useState(false);
   const [quotation, setQuotation] = useState<any>(null);
-  const [milestoneMeta, setMilestoneMeta] = useState<any[]>([]);
-  const [projectMeta, setProjectMeta] = useState<any>({});
 
   useEffect(() => setMounted(true), []);
 
@@ -40,13 +38,6 @@ export default function QuotationDetailPage() {
     async function load() {
       const q = await fetchQuotationByAddress(quotationAddress);
       setQuotation(q);
-
-      setMilestoneMeta(
-        JSON.parse(sessionStorage.getItem(`milestoneMeta_${quotationAddress}`) || '[]')
-      );
-      setProjectMeta(
-        JSON.parse(sessionStorage.getItem(`projectMeta_${quotationAddress}`) || '{}')
-      );
     }
 
     load();
@@ -142,8 +133,8 @@ export default function QuotationDetailPage() {
           <Card className="bg-white border-border p-6">
             <div className="flex justify-between items-start mb-4">
               <div>
-                <h2 className="text-2xl font-bold text-foreground">{projectMeta.projectTitle}</h2>
-                <p className="text-muted-foreground mt-1">{projectMeta.projectDescription}</p>
+                <h2 className="text-2xl font-bold text-foreground">{quotation.projectTitle}</h2>
+                <p className="text-muted-foreground mt-1">{quotation.projectDescription}</p>
               </div>
               <span className="px-3 py-1 bg-secondary text-primary rounded-full text-sm font-medium">
                 {statusLabel(status)}
@@ -168,8 +159,6 @@ export default function QuotationDetailPage() {
             <h3 className="text-lg font-semibold text-foreground mb-4">Milestones</h3>
             <div className="space-y-3">
               {milestones.map((m: any, i: number) => {
-                const meta = milestoneMeta[i] || {};
-
                 const msStatus = Number(m.status);
                 const dueDate = new Date(Number(m.deadlineAt) * 1000).toLocaleDateString();
 
@@ -179,13 +168,19 @@ export default function QuotationDetailPage() {
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
                           {getStatusIcon(msStatus)}
-                          <h4 className="font-semibold text-foreground">{meta.title || `Milestone #${i + 1}`}</h4>
+                          <h4 className="font-semibold text-foreground">
+                            {m.title || `Milestone #${i + 1}`}
+                          </h4>
                         </div>
+
+                        <p className="text-xs text-muted-foreground mb-2">{m.description}</p>
+
                         <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
                           <span>Allocation: {Number(m.percentBP) / 100}%</span>
                           <span>Due: {dueDate}</span>
                         </div>
                       </div>
+
                       <span className={`px-2 py-1 rounded text-xs font-medium whitespace-nowrap ${getStatusBadge(msStatus)}`}>
                         {MS_STATUS[msStatus]}
                       </span>

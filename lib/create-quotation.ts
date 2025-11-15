@@ -7,8 +7,15 @@ export interface CreateQuotationParams {
     buyer: Address;
     totalAmount: bigint;
 
+    projectTitle: string;
+    projectDescription: string;
+
     milestonePercentsBP: bigint[];
     milestoneDeadlines: bigint[];
+
+    milestoneTitles: string[];
+    milestoneDescriptions: string[];
+
     clientWindowSeconds: bigint;
     maxRevisions: number;
 
@@ -18,8 +25,14 @@ export interface CreateQuotationParams {
 export async function createQuotation({
     buyer,
     totalAmount,
+    projectTitle,
+    projectDescription,
+
     milestonePercentsBP,
     milestoneDeadlines,
+    milestoneTitles,
+    milestoneDescriptions,
+
     clientWindowSeconds,
     maxRevisions,
     sellerStakeAmount
@@ -38,13 +51,17 @@ export async function createQuotation({
             args: [
                 buyer,
                 totalAmount,
+                projectTitle,
+                projectDescription,
                 milestonePercentsBP,
                 milestoneDeadlines,
+                milestoneTitles,
+                milestoneDescriptions,
                 clientWindowSeconds,
                 maxRevisions
             ],
             account,
-            value: sellerStakeAmount, // payable staking
+            value: sellerStakeAmount
         });
 
         return txHash;
@@ -54,3 +71,4 @@ export async function createQuotation({
         throw error;
     }
 }
+
