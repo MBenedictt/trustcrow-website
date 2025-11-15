@@ -23,7 +23,7 @@ TrustCrow hadir sebagai solusi **peer-to-peer escrow service** yang dijalankan s
 Kontrak utama yang mewakili satu proyek antara **freelancer (seller)** dan **klien (buyer)**.  
 
 **Fitur utama:**  
-- Freelancer membuat *quotation* berisi milestone, deadline, dan persentase pembayaran.  
+- Freelancer membuat *quotation* berisi milestone, deadline, persentase pembayaran, dan juga stake dana sebesar 10% sebagai komitmen.  
 - Klien menyetor dana (ETH native / ERC20) ke escrow.  
 - Dana disimpan aman oleh smart contract hingga milestone disetujui.  
 - **Auto-release:** jika klien tidak merespons dalam jangka waktu tertentu, pembayaran otomatis dilepas ke freelancer.  
@@ -47,7 +47,7 @@ Digunakan oleh platform TrustCrow untuk mengelola semua proyek dengan mudah.
 ## Workflow Singkat  
 
 1. **Freelancer membuat quotation**  
-   Menentukan milestone, deadline, dan persentase pembayaran.  
+   Menentukan milestone, deadline, persentase pembayaran, stake dana komitmen.  
 2. **Klien menyetor dana ke escrow contract**  
    Dana terkunci aman di blockchain.  
 3. **Freelancer mengerjakan milestone pertama**  
