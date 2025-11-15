@@ -75,10 +75,11 @@ export default function Dashboard() {
             {quotations.map((q) => (
               <Link key={q.address} href={`/quotation/${q.address}`}>
                 <Card className="bg-white border-border hover:shadow-lg transition-shadow cursor-pointer h-full">
-                  <div className="p-6">
-                    <h3 className="text-lg font-semibold text-foreground mb-2">
-                      Quotation {q.address.slice(0, 6)}...{q.address.slice(-4)}
-                    </h3>
+                  <div className="px-6 pt-2">
+                    <h1 className='text-xl font-bold mb-2'>{q.projectTitle}</h1>
+                    <p className="w-fit text-gray-600 text-[10px] bg-gray-100 rounded-md px-2 py-1 mb-2">
+                      {q.address.slice(0, 6)}...{q.address.slice(-4)}
+                    </p>
 
                     <div className="mb-4">
                       <p className="text-sm text-muted-foreground">Total Amount</p>

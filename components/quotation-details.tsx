@@ -11,7 +11,10 @@ import { payQuotation } from '@/lib/pay';
 
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { CheckCircle, Clock, AlertCircle, Copy } from 'lucide-react';
+import { CheckCircle, Clock, AlertCircle, Copy, SquareArrowOutUpRight } from 'lucide-react';
+import { toast } from 'sonner';
+import { approveMilestone } from '@/lib/approve-milestone';
+import { publicClient } from '@/lib/contract';
 
 // ENUM FROM SMART CONTRACT
 const MS_STATUS = [
@@ -74,47 +77,108 @@ export default function QuotationDetailPage() {
 
   // UI ICONS
   const getStatusIcon = (status: number) => {
+    if (status === 4) return <AlertCircle className="w-4 h-4 text-red-600" />; // Refunded
+    if (status === 3) return <CheckCircle className="w-4 h-4 text-green-600" />; // Released
     if (status === 2) return <CheckCircle className="w-4 h-4 text-green-600" />; // Approved
     if (status === 1) return <Clock className="w-4 h-4 text-blue-600" />; // Submitted
     return <AlertCircle className="w-4 h-4 text-yellow-600" />; // Pending
   };
 
   const getStatusBadge = (status: number) => {
+    if (status === 4) return 'bg-red-100 text-red-700';
+    if (status === 3) return 'bg-green-100 text-green-700';
     if (status === 2) return 'bg-green-100 text-green-700';
     if (status === 1) return 'bg-blue-100 text-blue-700';
     return 'bg-yellow-100 text-yellow-700';
   };
 
   // ACTIONS
+  async function handleTx(promise: Promise<`0x${string}`>, messages: {
+    sending: string;
+    confirming: string;
+    success: string;
+  }) {
+    let toastId: string | number | undefined;
+
+    try {
+      toastId = toast.loading(messages.sending);
+
+      // Step 1 — get txHash
+      const txHash = await promise;
+
+      // Step 2 — update toast: waiting for confirmation
+      toast.loading(messages.confirming, { id: toastId });
+
+      // Step 3 — wait receipt
+      await publicClient.waitForTransactionReceipt({ hash: txHash });
+
+      // Step 4 — success
+      toast.success(messages.success, { id: toastId });
+
+      return txHash;
+
+    } catch (err) {
+      toast.error("Transaction failed", { id: toastId });
+      throw err;
+    }
+  }
+
   const handlePay = async () => {
     try {
-      await payQuotation(quotationAddress, quotation.totalAmount);
-      alert("Payment sent!");
-      window.location.reload();
+      await handleTx(
+        payQuotation(quotationAddress, quotation.totalAmount),
+        {
+          sending: "Sending transaction...",
+          confirming: "Waiting for blockchain confirmation...",
+          success: "Transaction completed!"
+        }
+      );
+
+      setTimeout(() => window.location.reload(), 600);
     } catch (err) {
       console.error(err);
-      alert("Payment error.");
     }
   };
 
   const handleSubmitDeliverable = async () => {
     try {
-      await submitDeliverable({
-        quotationAddress,
-        milestoneIndex: nextMilestoneIndex,
-        note: "Project delivered"
-      });
+      await handleTx(
+        submitDeliverable({
+          quotationAddress,
+          milestoneIndex: nextMilestoneIndex,
+          note: "Project delivered"
+        }),
+        {
+          sending: "Submitting deliverable...",
+          confirming: "Waiting for confirmation...",
+          success: "Deliverable submitted!"
+        }
+      );
 
-      alert("Deliverable submitted!");
-      window.location.reload();
+      setTimeout(() => window.location.reload(), 600);
     } catch (err) {
       console.error(err);
-      alert("Failed to submit deliverable.");
     }
   };
 
   const handleApprove = async () => {
-    alert("Approve Milestone — belum ada function.");
+    try {
+      await handleTx(
+        approveMilestone({
+          quotationAddress,
+          milestoneIndex: nextMilestoneIndex,
+        }),
+        {
+          sending: "Approving milestone...",
+          confirming: "Waiting for confirmation...",
+          success: "Milestone approved!"
+        }
+      );
+
+      setTimeout(() => window.location.reload(), 600);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
@@ -194,29 +258,53 @@ export default function QuotationDetailPage() {
           {/* Actions */}
           <div>
             <h3 className="text-lg font-semibold text-foreground mb-4">Actions</h3>
-            <div className="flex">
-              {isSeller && status >= 1 && status < 3 && (
-                <Button onClick={handleSubmitDeliverable} className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90">
-                  Submit Deliverable
-                </Button>
-              )}
 
+            <div className="flex">
+              {/* Seller: can submit ONLY if milestone is Pending */}
+              {isSeller &&
+                status >= 1 && status < 3 &&
+                milestones[currentMsNum]?.status === 0 && ( // 0 = Pending
+                  <Button
+                    onClick={handleSubmitDeliverable}
+                    className="cursor-pointer flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
+                  >
+                    Submit Deliverable
+                  </Button>
+                )}
+
+              {/* Buyer: pay only if Created */}
               {isBuyer && status === 0 && (
-                <Button onClick={handlePay} className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90">
+                <Button
+                  onClick={handlePay}
+                  className="cursor-pointer flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
+                >
                   Pay Quotation
                 </Button>
               )}
 
-              {isBuyer && status >= 1 && status < 3 && (
-                <Button
-                  disabled={!hasSellerSubmitted}
-                  onClick={handleApprove}
-                  className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40"
-                >
-                  Approve Milestone
-                </Button>
-              )}
+              {/* Buyer: approve only if seller already submitted */}
+              {isBuyer &&
+                status >= 1 && status < 3 &&
+                milestones[currentMsNum]?.status === 1 && ( // 1 = Submitted
+                  <Button
+                    onClick={handleApprove}
+                    className="cursor-pointer flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
+                  >
+                    Approve Milestone
+                  </Button>
+                )}
             </div>
+
+            {/* If no action available */}
+            {!(
+              (isSeller && status >= 1 && status < 3 && milestones[currentMsNum]?.status === 0) ||
+              (isBuyer && status === 0) ||
+              (isBuyer && status >= 1 && status < 3 && milestones[currentMsNum]?.status === 1)
+            ) && (
+                <p className="text-sm text-muted-foreground">
+                  No action available at this stage.
+                </p>
+              )}
           </div>
 
           {/* Stake Information */}
@@ -246,10 +334,28 @@ export default function QuotationDetailPage() {
             <div className="space-y-4">
               <div>
                 <p className="text-xs text-muted-foreground mb-2">Contract Address</p>
+
                 <div className="flex items-center gap-2 bg-secondary/30 p-2 rounded text-sm font-mono text-foreground">
                   <span className="truncate">{quotationAddress}</span>
-                  <button className="ml-auto hover:text-primary transition-colors">
+
+                  {/* Copy Button */}
+                  <button
+                    onClick={() => {
+                      const url = `${window.location.origin}/quotation/${quotationAddress}`;
+                      navigator.clipboard.writeText(url);
+                      toast.success("Link copied!");
+                    }}
+                    className="hover:text-primary transition-colors cursor-pointer"
+                  >
                     <Copy className="w-4 h-4" />
+                  </button>
+
+                  {/* Etherscan Button */}
+                  <button
+                    onClick={() => window.open(`https://sepolia.etherscan.io/address/${quotationAddress}`, "_blank")}
+                    className="hover:text-primary transition-colors cursor-pointer"
+                  >
+                    <SquareArrowOutUpRight className="w-4 h-4" />
                   </button>
                 </div>
               </div>

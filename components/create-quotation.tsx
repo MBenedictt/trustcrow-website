@@ -7,6 +7,7 @@ import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { createQuotation } from '@/lib/create-quotation'
 import { toast } from "sonner"
+import { publicClient } from '@/lib/contract'
 
 interface Milestone {
   id: string
@@ -50,6 +51,35 @@ export default function CreateQuotation() {
     setMilestones(milestones.filter(m => m.id !== id))
   }
 
+  async function handleTx(
+    promise: Promise<`0x${string}`>,
+    messages: {
+      sending: string;
+      confirming: string;
+      success: string;
+    }
+  ) {
+    let toastId: string | number | undefined;
+
+    try {
+      toastId = toast.loading(messages.sending);
+
+      const txHash = await promise;
+
+      toast.loading(messages.confirming, { id: toastId });
+
+      await publicClient.waitForTransactionReceipt({ hash: txHash });
+
+      toast.success(messages.success, { id: toastId });
+
+      return txHash;
+
+    } catch (err) {
+      toast.error("Transaction failed", { id: toastId });
+      throw err;
+    }
+  }
+
   const handleCreateQuotation = async () => {
     try {
       if (!clientWallet || !totalValue) {
@@ -84,33 +114,29 @@ export default function CreateQuotation() {
       const clientWindowSeconds = BigInt(259200);
       const maxRevisions = 1;
 
-      // Loading toast
-      const loadingToast = toast.loading("Creating quotation...");
+      // 🔥 USE handleTx
+      const txHash = await handleTx(
+        createQuotation({
+          buyer: clientWallet as `0x${string}`,
+          totalAmount: totalAmountWei,
+          projectTitle,
+          projectDescription,
+          milestonePercentsBP,
+          milestoneDeadlines,
+          milestoneTitles,
+          milestoneDescriptions,
+          clientWindowSeconds,
+          maxRevisions,
+          sellerStakeAmount,
+        }),
+        {
+          sending: "Creating quotation...",
+          confirming: "Waiting for blockchain confirmation...",
+          success: "Quotation successfully created!"
+        }
+      );
 
-      const txHash = await createQuotation({
-        buyer: clientWallet as `0x${string}`,
-        totalAmount: totalAmountWei,
-
-        projectTitle,
-        projectDescription,
-
-        milestonePercentsBP,
-        milestoneDeadlines,
-        milestoneTitles,
-        milestoneDescriptions,
-
-        clientWindowSeconds,
-        maxRevisions,
-        sellerStakeAmount,
-      });
-
-      toast.success("Quotation successfully created!", {
-        description: `Tx: ${txHash.slice(0, 10)}...`,
-      });
-
-      toast.dismiss(loadingToast);
-
-      // Small delay, then redirect
+      // Redirect after success
       setTimeout(() => {
         window.location.href = "/";
       }, 800);
@@ -122,7 +148,6 @@ export default function CreateQuotation() {
       });
     }
   };
-
 
   const stakeAmount = totalValue && freelancerStake
     ? (Number(totalValue) * Number(freelancerStake)) / 100

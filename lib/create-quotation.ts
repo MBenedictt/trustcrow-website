@@ -7,19 +7,18 @@ export interface CreateQuotationParams {
     buyer: Address;
     totalAmount: bigint;
 
-    projectTitle: string;
-    projectDescription: string;
-
     milestonePercentsBP: bigint[];
     milestoneDeadlines: bigint[];
-
     milestoneTitles: string[];
     milestoneDescriptions: string[];
+
+    projectTitle: string;
+    projectDescription: string;
 
     clientWindowSeconds: bigint;
     maxRevisions: number;
 
-    sellerStakeAmount: bigint; // payable amount
+    sellerStakeAmount: bigint;
 }
 
 export async function createQuotation({
@@ -51,14 +50,14 @@ export async function createQuotation({
             args: [
                 buyer,
                 totalAmount,
-                projectTitle,
-                projectDescription,
                 milestonePercentsBP,
                 milestoneDeadlines,
-                milestoneTitles,
-                milestoneDescriptions,
                 clientWindowSeconds,
-                maxRevisions
+                maxRevisions,
+                projectTitle,
+                projectDescription,
+                milestoneTitles,
+                milestoneDescriptions
             ],
             account,
             value: sellerStakeAmount
