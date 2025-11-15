@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { createQuotation } from '@/lib/create-quotation'
 
 interface Milestone {
   id: string
@@ -19,7 +20,7 @@ export default function CreateQuotation() {
   const [projectDescription, setProjectDescription] = useState('')
   const [clientWallet, setClientWallet] = useState('')
   const [totalValue, setTotalValue] = useState('')
-  const [freelancerStake, setFreelancerStake] = useState('')
+  const freelancerStake = 10;
   const [milestones, setMilestones] = useState<Milestone[]>([])
   const [showMilestoneForm, setShowMilestoneForm] = useState(false)
   const [currentMilestone, setCurrentMilestone] = useState({
@@ -48,6 +49,71 @@ export default function CreateQuotation() {
     setMilestones(milestones.filter(m => m.id !== id))
   }
 
+  const handleCreateQuotation = async () => {
+    try {
+      if (!clientWallet || !totalValue) {
+        alert("Missing required fields");
+        return;
+      }
+
+      // --- STORE PROJECT DATA ---
+      sessionStorage.setItem(
+        "projectMeta",
+        JSON.stringify({
+          projectTitle,
+          projectDescription
+        })
+      );
+
+      // --- STORE MILESTONES (TITLES + DESC) ---
+      sessionStorage.setItem(
+        "milestoneMeta",
+        JSON.stringify(
+          milestones.map(m => ({
+            id: m.id,
+            title: m.title,
+            description: m.description
+          }))
+        )
+      );
+
+      // --- basis points ---
+      const milestonePercentsBP = milestones.map(m =>
+        BigInt(m.percentage * 100)
+      );
+
+      // --- deadline timestamps ---
+      const milestoneDeadlines = milestones.map(m =>
+        BigInt(Math.floor(new Date(m.dueDate).getTime() / 1000))
+      );
+
+      const totalAmountWei = BigInt(Math.floor(Number(totalValue) * 1e18));
+      const sellerStakeAmount = (totalAmountWei * BigInt(10)) / BigInt(100);
+
+      const clientWindowSeconds = BigInt(259200); // 3 days
+      const maxRevisions = 1;
+
+      const txHash = await createQuotation({
+        buyer: clientWallet as `0x${string}`,
+        totalAmount: totalAmountWei,
+        milestonePercentsBP,
+        milestoneDeadlines,
+        clientWindowSeconds,
+        maxRevisions,
+        sellerStakeAmount,
+      });
+
+      alert(`Quotation created! Tx: ${txHash}`);
+
+      // REDIRECT TO DASHBOARD + REFRESH
+      window.location.href = "/";
+
+    } catch (err) {
+      console.error(err);
+      alert("Failed to create quotation");
+    }
+  };
+
   const stakeAmount = totalValue && freelancerStake
     ? (Number(totalValue) * Number(freelancerStake)) / 100
     : 0
@@ -61,10 +127,10 @@ export default function CreateQuotation() {
       <h1 className="text-3xl font-bold text-foreground mb-2">Create Quotation</h1>
       <p className="text-muted-foreground mb-8">Set up a new escrow quotation with milestones</p>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Left Column - Form */}
         <div className="lg:col-span-2">
-          <Card className="bg-white border-border p-6 space-y-6">
+          <Card className="bg-white border-border p-6 space-y-1">
             {/* Project Title */}
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
@@ -121,7 +187,7 @@ export default function CreateQuotation() {
             </div>
 
             {/* Freelancer Stake Percentage */}
-            <div>
+            {/* <div>
               <label className="block text-sm font-medium text-foreground mb-2">
                 Freelancer Stake (%)
               </label>
@@ -133,7 +199,8 @@ export default function CreateQuotation() {
                 placeholder="10"
                 className="w-full"
               />
-            </div>
+            </div> */}
+            <p className="text-sm font-medium">Freelancer Stake: 10%</p>
 
             {/* Milestones Section */}
             <div>
@@ -147,17 +214,19 @@ export default function CreateQuotation() {
                 <div className="space-y-3 mb-4">
                   {milestones.map((milestone) => (
                     <Card key={milestone.id} className="bg-secondary/30 border-border p-4 flex justify-between items-start">
-                      <div>
-                        <p className="font-medium text-foreground">{milestone.title}</p>
-                        <p className="text-sm text-muted-foreground">{milestone.description}</p>
-                        <div className="flex gap-4 mt-2 text-xs text-muted-foreground">
-                          <span>Due: {milestone.dueDate}</span>
-                          <span>Allocation: {milestone.percentage}%</span>
+                      <div className='w-full flex justify-between'>
+                        <div>
+                          <p className="font-bold text-foreground">{milestone.title}</p>
+                          <p className="text-sm text-muted-foreground">{milestone.description}</p>
+                          <div className="flex gap-4 mt-2 text-xs text-muted-foreground">
+                            <span>Due: {milestone.dueDate}</span>
+                          </div>
                         </div>
+                        <p className="font-bold text-xl text-primary mt-1 mr-1">{milestone.percentage}%</p>
                       </div>
                       <button
                         onClick={() => handleRemoveMilestone(milestone.id)}
-                        className="text-destructive hover:text-destructive/80 text-sm font-medium"
+                        className="cursor-pointer bg-red-100 border border-red-300 hover:bg-red-200 text-red-600 px-3 py-1 text-[12px] rounded hover:scale-105 transition"
                       >
                         Remove
                       </button>
@@ -167,7 +236,7 @@ export default function CreateQuotation() {
               )}
 
               {showMilestoneForm ? (
-                <Card className="border-border p-4 space-y-3 mb-4 bg-secondary/20">
+                <Card className="border-border p-4 space-y-1 mb-4 bg-secondary/20">
                   <Input
                     placeholder="Milestone title"
                     value={currentMilestone.title}
@@ -195,14 +264,14 @@ export default function CreateQuotation() {
                   <div className="flex gap-2">
                     <Button
                       onClick={handleAddMilestone}
-                      className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
+                      className="flex-1 bg-primary text-primary-foreground hover:bg-primary/80 cursor-pointer"
                     >
                       Add Milestone
                     </Button>
                     <Button
                       onClick={() => setShowMilestoneForm(false)}
                       variant="outline"
-                      className="flex-1"
+                      className="flex-1 border-primary text-primary hover:bg-primary/10 hover:text-primary cursor-pointer"
                     >
                       Cancel
                     </Button>
@@ -212,7 +281,7 @@ export default function CreateQuotation() {
                 <Button
                   onClick={() => setShowMilestoneForm(true)}
                   variant="outline"
-                  className="w-full border-primary text-primary hover:bg-secondary"
+                  className="w-full border-primary text-primary hover:bg-primary/10 hover:text-primary cursor-pointer"
                 >
                   + Add Milestone
                 </Button>
@@ -220,9 +289,13 @@ export default function CreateQuotation() {
             </div>
 
             {/* Create Button */}
-            <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90 py-6 text-base font-medium">
+            <Button
+              className="w-full bg-primary text-primary-foreground hover:bg-primary/90 py-6 text-base font-medium cursor-pointer"
+              onClick={handleCreateQuotation}
+            >
               Create Quotation
             </Button>
+
           </Card>
         </div>
 
@@ -249,7 +322,7 @@ export default function CreateQuotation() {
               <div>
                 <p className="text-xs text-muted-foreground mb-1">Freelancer Stake</p>
                 <p className="text-lg font-semibold text-foreground">
-                  {freelancerStake ? `${freelancerStake}%` : '-%'}
+                  10%
                 </p>
               </div>
 
