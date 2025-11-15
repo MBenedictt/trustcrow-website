@@ -7,18 +7,14 @@ const nextConfig = {
     unoptimized: true,
   },
 
-  // 🔥 FIX: Tell Turbopack to ignore test files inside node_modules
+  // 🚫 Disable Turbopack completely
   experimental: {
-    turbo: {
-      loaders: {
-        "*.test.js": false,
-        "*.test.ts": false,
-        "*.test.mjs": false,
-        "*.md": false,
-        "*.zip": false,
-        "LICENSE": false,
-      },
-    },
+    turbo: false,
+  },
+
+  // ✅ Force Webpack for all builds
+  webpack: (config) => {
+    return config;
   },
 };
 
