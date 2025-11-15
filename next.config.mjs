@@ -7,13 +7,16 @@ const nextConfig = {
     unoptimized: true,
   },
 
-  // 🚫 Disable Turbopack completely
   experimental: {
-    turbo: false,
+    turbo: false, // optional, but fine
   },
 
-  // ✅ Force Webpack for all builds
   webpack: (config) => {
+    config.externals.push(
+      'pino-pretty',
+      'lokijs',
+      'encoding'
+    );
     return config;
   },
 };
