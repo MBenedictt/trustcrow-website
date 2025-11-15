@@ -1,22 +1,11 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-  images: {
-    unoptimized: true,
-  },
+import type { NextConfig } from "next";
 
-  experimental: {
-    turbo: false, // optional, but fine
-  },
-
+const nextConfig: NextConfig = {
+  /* config options here */
+  reactStrictMode: true,
   webpack: (config) => {
-    config.externals.push(
-      'pino-pretty',
-      'lokijs',
-      'encoding'
-    );
+    config.externals.push('pino-pretty', 'lokijs', 'encoding');
     return config;
   },
 };
