@@ -1,30 +1,58 @@
-# TrustCrow UI Design
+# TrustCrow  
+**Peer-to-Peer Escrow Platform for Freelancers, Powered by Smart Contracts**
 
-*Automatically synced with your [v0.app](https://v0.app) deployments*
+TrustCrow adalah platform **peer-to-peer escrow berbasis blockchain** yang memastikan setiap transaksi antara **freelancer dan klien** berlangsung **aman, transparan, dan adil tanpa perantara**.  
+Setiap proyek dibuat dalam bentuk **Quotation Contract**, di mana pembayaran disimpan di **escrow otomatis (smart contract)** dan dirilis secara bertahap sesuai progres milestone yang disetujui klien.
 
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/matthew-benedicts-projects/v0-trust-crow-ui-design)
-[![Built with v0](https://img.shields.io/badge/Built%20with-v0.app-black?style=for-the-badge)](https://v0.app/chat/mZItP20ye5u)
+---
 
-## Overview
+## Latar Belakang  
 
-This repository will stay in sync with your deployed chats on [v0.app](https://v0.app).
-Any changes you make to your deployed app will be automatically pushed to this repository from [v0.app](https://v0.app).
+Freelancer di Indonesia masih sering bertransaksi manual melalui WhatsApp atau transfer langsung tanpa jaminan pembayaran.  
+Masalah seperti **klien ghosting**, **pembatalan sepihak**, dan **penipuan proyek** masih sering terjadi.  
 
-## Deployment
+Di sisi lain, platform freelance global seperti **Upwork** atau **Fiverr** mengenakan **fee tinggi (10–20%)** dan tetap bergantung pada **pihak sentral**.  
 
-Your project is live at:
+TrustCrow hadir sebagai solusi **peer-to-peer escrow service** yang dijalankan sepenuhnya oleh **smart contract di blockchain**, tanpa pihak ketiga.
 
-**[https://vercel.com/matthew-benedicts-projects/v0-trust-crow-ui-design](https://vercel.com/matthew-benedicts-projects/v0-trust-crow-ui-design)**
+---
 
-## Build your app
+## Arsitektur Kontrak  
 
-Continue building your app on:
+### `Quotation.sol`  
+Kontrak utama yang mewakili satu proyek antara **freelancer (seller)** dan **klien (buyer)**.  
 
-**[https://v0.app/chat/mZItP20ye5u](https://v0.app/chat/mZItP20ye5u)**
+**Fitur utama:**  
+- Freelancer membuat *quotation* berisi milestone, deadline, dan persentase pembayaran.  
+- Klien menyetor dana (ETH native / ERC20) ke escrow.  
+- Dana disimpan aman oleh smart contract hingga milestone disetujui.  
+- **Auto-release:** jika klien tidak merespons dalam jangka waktu tertentu, pembayaran otomatis dilepas ke freelancer.  
+- **Refund:** jika freelancer tidak mengirim hasil sebelum tenggat waktu, dana dapat diklaim kembali oleh klien.  
+- Seluruh transaksi transparan dan terverifikasi on-chain.
 
-## How It Works
+---
 
-1. Create and modify your project using [v0.app](https://v0.app)
-2. Deploy your chats from the v0 interface
-3. Changes are automatically pushed to this repository
-4. Vercel deploys the latest version from this repository
+### `QuotationFactory.sol`  
+Kontrak *factory* yang digunakan untuk **membuat instance Quotation baru**.  
+Digunakan oleh platform TrustCrow untuk mengelola semua proyek dengan mudah.
+
+**Fitur utama:**  
+- Mendeploy kontrak `Quotation` baru untuk setiap proyek.  
+- Mencatat semua quotation milik setiap **freelancer (seller)** dan **klien (buyer)**.  
+- Memungkinkan pencarian riwayat transaksi atau quotation sebelumnya.  
+- Dijalankan oleh admin (owner) sebagai kontrol awal platform.
+
+---
+
+## Workflow Singkat  
+
+1. **Freelancer membuat quotation**  
+   Menentukan milestone, deadline, dan persentase pembayaran.  
+2. **Klien menyetor dana ke escrow contract**  
+   Dana terkunci aman di blockchain.  
+3. **Freelancer mengerjakan milestone pertama**  
+   Hasil dikirim lewat kanal komunikasi (WhatsApp, email, dsb).  
+4. **Klien menyetujui milestone**  
+   Smart contract otomatis merilis pembayaran ke freelancer.  
+5. **Auto-release & refund logic**  
+   Jika klien tidak merespons atau freelancer tidak submit, kontrak mengeksekusi aturan otomatis.
