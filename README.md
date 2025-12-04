@@ -1,4 +1,4 @@
-# TrustCrow  
+# TrustCrow - DeFi Escrow Payment Service
 **Peer-to-Peer Escrow Platform for Freelancers, Powered by Smart Contracts**
 
 TrustCrow adalah platform **peer-to-peer escrow berbasis blockchain** yang memastikan setiap transaksi antara **freelancer dan klien** berlangsung **aman, transparan, dan adil tanpa perantara**.  
