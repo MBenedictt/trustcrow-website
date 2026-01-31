@@ -183,7 +183,7 @@ export default function QuotationDetailPage() {
 
   return (
     <div className="max-w-7xl mx-auto mt-[70px] px-4 sm:px-6 lg:px-8 py-8">
-      <Link href="/" className="text-primary hover:underline text-sm mb-4 inline-block">
+      <Link href="/dashboard" className="text-primary hover:underline text-sm mb-4 inline-block">
         ← Back to Dashboard
       </Link>
 

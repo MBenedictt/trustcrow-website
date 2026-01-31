@@ -21,25 +21,17 @@ export default function CustomWalletButton() {
                 return connected ? (
                     <button
                         onClick={openAccountModal}
-                        className="cursor-pointer pl-4 pr-1 py-1 max-md:pr-2 max-md:pl-2 rounded-lg text-sm font-medium bg-white border-2 border-gray-300 text-black hover:opacity-90 transition hover:scale-103 flex items-center gap-2"
+                        className="cursor-pointer p-1 rounded-lg text-sm font-medium bg-gray-100 border border-gray-200 text-black hover:opacity-90 transition hover:scale-103 flex items-center gap-2"
                     >
-                        <span className="hidden md:inline mr-3 text-xs text-black/60">
-                            {account.displayBalance}
-                        </span>
-                        <div className="flex items-center gap-2 bg-gray-200 max-md:bg-white px-2 pt-1.5 py-1.75 rounded-md">
-                            {account.ensAvatar ? (
-                                <Image
-                                    src={account.ensAvatar}
-                                    alt="ENS Avatar"
-                                    className="w-6 h-6 rounded-full"
-                                    width={24}
-                                    height={24}
-                                />
-                            ) : (
-                                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-pink-400 to-indigo-400" />
-                            )}
+                        <div className="flex items-center gap-2 px-2 py-1">
+                            <div className="w-4 h-4 bg-green-400/10 rounded-full flex justify-center items-center">
+                                <div className="w-2 h-2 bg-green-400 rounded-full" />
+                            </div>
                             <span className="text-sm font-semibold text-black">
                                 {account.displayName}
+                            </span>
+                            <span className="hidden md:inline text-xs text-black/60">
+                                ({account.displayBalance})
                             </span>
                         </div>
                     </button>

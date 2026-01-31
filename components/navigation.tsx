@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import CustomWalletButton from "./custom-wallet-button";
+import Image from "next/image";
 
 const Navbar = () => {
   const [showNavbar, setShowNavbar] = useState(true);
@@ -38,7 +39,10 @@ const Navbar = () => {
         className={`flex justify-between items-center px-10 max-md:px-5 transition-all duration-300 ease-in-out ${navbarOpacity} h-full`}
       >
         {/* Logo / Brand */}
-        <Link href="/" className="text-2xl font-bold text-[#180D39]">
+        <Link href="/" className="text-2xl font-extrabold text-[#286763] flex items-center gap-2">
+          <i>
+            <Image src="/trustcrow-icon.png" alt="TrustCrow Logo" width={24} height={24} />
+          </i>
           TrustCrow
         </Link>
 
