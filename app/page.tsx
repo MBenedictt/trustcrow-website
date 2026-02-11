@@ -1,7 +1,10 @@
 import LandingNavbar from "@/components/landing-nav";
+import CTA from "@/components/landing/cta";
+import { Faqs } from "@/components/landing/faqs";
 import Features from "@/components/landing/features";
 import Hero from "@/components/landing/hero";
 import Step from "@/components/landing/step";
+import WhyUs from "@/components/landing/whyus";
 
 export default function Home() {
   return (
@@ -10,8 +13,9 @@ export default function Home() {
       <Hero />
       <Features />
       <Step />
-
-
+      <WhyUs />
+      <Faqs />
+      <CTA />
     </div>
   )
 }

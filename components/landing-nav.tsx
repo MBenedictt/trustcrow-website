@@ -45,7 +45,7 @@ const LandingNavbar = () => {
                     TrustCrow
                 </Link>
 
-                <Link href="/dashboard" className="flex items-center gap-2 bg-primary/10 border border-primary/50 text-sm max-sm:text-xs font-semibold text-primary hover:text-primary-foreground max-md:focus:text-primary-foreground hover:bg-primary/90 focus:bg-primary/90 px-3 py-2 rounded-md transition">
+                <Link href="/dashboard" className="flex items-center gap-2 text-sm font-semibold text-primary-foreground max-md:focus:text-primary-foreground bg-[#286763] hover:bg-[#286763]/90 focus:bg-[#286763]/90 px-3 py-2 rounded-md transition">
                     Open App <SquareArrowOutUpRight className="h-4 w-4" />
                 </Link>
             </div>

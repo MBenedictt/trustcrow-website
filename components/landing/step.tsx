@@ -43,7 +43,7 @@ const Step = () => {
 
     return (
         <section className="py-12 bg-background">
-            <div className="p-16 max-md:p-8 mx-16 max-xl:mx-8 max-lg:mx-14 max-md:mx-10 rounded-xl bg-gradient-to-br from-[rgb(41,163,149)] to-[rgb(45,104,133)]">
+            <div className="p-12 max-md:p-8 mx-16 max-xl:mx-8 max-md:mx-10 rounded-xl bg-gradient-to-br from-[rgb(41,163,149)] to-[rgb(45,104,133)]">
 
                 <p className="text-sm font-extrabold text-slate-200 uppercase tracking-wider mb-3">
                     STEP BY STEP

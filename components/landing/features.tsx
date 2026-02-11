@@ -24,14 +24,14 @@ const Features = () => {
     ];
 
     return (
-        <section id="products" className="py-12 bg-background">
+        <section className="py-12 bg-background">
             <div className="container mx-auto px-16 max-xl:px-8 max-md:px-10">
                 <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 mb-16">
                     <div>
                         <p className="text-sm font-bold text-accent uppercase tracking-wider mb-3">
                             FUTURE PAYMENT
                         </p>
-                        <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground leading-tight">
+                        <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-extrabold text-foreground leading-tight">
                             A better way to build trust in every deal.
                         </h2>
                     </div>
