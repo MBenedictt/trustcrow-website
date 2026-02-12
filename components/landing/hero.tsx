@@ -4,7 +4,7 @@ import Link from "next/link";
 
 const Hero = () => {
     return (
-        <section className="relative px-4 py-20 sm:px-6 lg:px-8 bg-gradient-to-b from-[#E6FFFB] to-[#FFFFFF] pt-[140px]">
+        <section id="home" className="relative px-4 py-20 sm:px-6 lg:px-8 bg-gradient-to-b from-[#E6FFFB] to-[#FFFFFF] pt-[140px]">
             <div className="max-w-7xl mx-auto">
                 <div className="flex flex-col items-center gap-6 max-lg:px-12 max-md:px-2 max-sm:px-0">
                     <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-full border border-gray-200 shadow-sm bg-white">

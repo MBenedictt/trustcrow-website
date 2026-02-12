@@ -41,7 +41,7 @@ const Faqs = ({
     ],
 }: Faq1Props) => {
     return (
-        <section className="w-full py-12 bg-background px-10 lg:px-8 flex xl:px-16 justify-center">
+        <section id="faq" className="w-full py-12 bg-background px-10 lg:px-8 flex xl:px-16 justify-center">
             <div className="container mx-auto flex flex-col lg:flex-row gap-10 lg:gap-20">
 
                 {/* Heading Section */}

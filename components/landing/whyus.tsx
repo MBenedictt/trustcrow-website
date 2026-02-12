@@ -7,7 +7,7 @@ import lockAnim from "@/public/animations/lock.json";
 
 const WhyUs = () => {
     return (
-        <section className="py-12 bg-background">
+        <section id="whyus" className="py-12 bg-background">
             <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-extrabold text-foreground leading-tight text-center max-md:text-start max-md:px-10">
                 Why Choose Us?
             </h1>

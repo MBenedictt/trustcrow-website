@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { createQuotation } from '@/lib/create-quotation'
 import { toast } from "sonner"
 import { publicClient } from '@/lib/contract'
+import { ArrowLeft } from 'lucide-react'
 
 interface Milestone {
   id: string
@@ -156,7 +157,7 @@ export default function CreateQuotation() {
   return (
     <div className="max-w-7xl mx-auto mt-[70px] px-4 sm:px-6 lg:px-8 py-8">
       <Link href="/dashboard" className="text-primary hover:underline text-sm mb-4 inline-block">
-        ← Back to Dashboard
+        <ArrowLeft className="w-4 h-4 inline mr-1" /> Back to Dashboard
       </Link>
 
       <h1 className="text-3xl font-bold text-foreground mb-2">Create Quotation</h1>

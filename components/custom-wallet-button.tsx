@@ -21,7 +21,7 @@ export default function CustomWalletButton() {
                 return connected ? (
                     <button
                         onClick={openAccountModal}
-                        className="cursor-pointer p-1 rounded-lg text-sm font-medium bg-gray-100 border border-gray-200 text-black hover:opacity-90 transition hover:scale-103 flex items-center gap-2"
+                        className="cursor-pointer p-1 rounded text-sm font-medium bg-gray-100 border border-gray-200 text-black hover:opacity-90 transition hover:scale-103 flex items-center gap-2"
                     >
                         <div className="flex items-center gap-2 px-2 py-1">
                             <div className="w-4 h-4 bg-green-400/10 rounded-full flex justify-center items-center">
@@ -38,7 +38,7 @@ export default function CustomWalletButton() {
                 ) : (
                     <button
                         onClick={openConnectModal}
-                        className="cursor-pointer px-4 py-2 text-white rounded-lg text-sm font-medium bg-[#2ABE9E] text-slate-800 hover:bg-[#28A88C] transition hover:scale-103"
+                        className="cursor-pointer px-4 py-2 text-white rounded-lg text-sm font-medium bg-[#286763] text-slate-800 hover:bg-[#286763]/90 max-md:focus:bg-[#286763]/90 transition hover:scale-103"
                     >
                         Connect
                     </button>
