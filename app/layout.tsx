@@ -4,6 +4,7 @@ import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 import { Providers } from './providers';
 import { Toaster } from "sonner";
+import AOSProvider from './aos-provider';
 
 const _manrope = Manrope({ subsets: ["latin"] });
 
@@ -38,7 +39,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`font-sans antialiased`}>
-        <Providers>{children}</Providers>
+        <Providers>
+          <AOSProvider>
+            {children}
+          </AOSProvider>
+        </Providers>
         <Toaster position="bottom-right" richColors />
         <Analytics />
       </body>

@@ -28,14 +28,14 @@ const Features = () => {
             <div className="container mx-auto px-16 max-xl:px-8 max-md:px-10">
                 <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 mb-16">
                     <div>
-                        <p className="text-sm font-bold text-accent uppercase tracking-wider mb-3">
+                        <p className="text-sm font-bold text-accent uppercase tracking-wider mb-3" data-aos="fade-up">
                             FUTURE PAYMENT
                         </p>
-                        <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-extrabold text-foreground leading-tight">
+                        <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-extrabold text-foreground leading-tight" data-aos="fade-up" data-aos-delay="100">
                             A better way to build trust in every deal.
                         </h2>
                     </div>
-                    <div className="flex items-center">
+                    <div className="flex items-center" data-aos="fade-up" data-aos-delay="100">
                         <p className="text-muted-foreground text-lg max-sm:text-sm max-w-xl leading-relaxed">
                             By combining milestone-based invoicing, smart contract automation, and transparent verification workflows, TrustCrow eliminates payment disputes, ghosting risks, and trust issues—before they happen.
                         </p>
@@ -43,7 +43,7 @@ const Features = () => {
                 </div>
 
                 {/* Features Grid */}
-                <div className="grid lg:grid-cols-3 gap-8">
+                <div className="grid lg:grid-cols-3 gap-8" data-aos="fade-up" data-aos-delay="300">
                     {features.map((feature, index) => (
                         <SpotlightCard
                             key={feature.title}

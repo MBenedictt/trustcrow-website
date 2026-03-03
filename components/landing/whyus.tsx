@@ -8,16 +8,15 @@ import lockAnim from "@/public/animations/lock.json";
 const WhyUs = () => {
     return (
         <section id="whyus" className="py-12 bg-background">
-            <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-extrabold text-foreground leading-tight text-center max-md:text-start max-md:px-10">
+            <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-extrabold text-foreground leading-tight text-center max-md:text-start max-md:px-10" data-aos="fade-up">
                 Why Choose Us?
             </h1>
 
-            <p className="text-muted-foreground text-lg max-sm:text-sm leading-relaxed text-center max-md:text-start max-md:px-10 mt-4">
+            <p className="text-muted-foreground text-lg max-sm:text-sm leading-relaxed text-center max-md:text-start max-md:px-10 mt-4" data-aos="fade-up" data-aos-delay="300">
                 TrustCrow offers a trustless two-way commitment escrow system powered by smart contracts.
             </p>
 
-            <div className="grid grid-cols-2 max-md:grid-cols-1 gap-8 mt-8 px-16 max-xl:px-8 max-md:px-10">
-
+            <div className="grid grid-cols-2 max-md:grid-cols-1 gap-8 mt-8 px-16 max-xl:px-8 max-md:px-10" data-aos="fade-up" data-aos-delay="500">
                 {/* Freelancer Card */}
                 <div
                     tabIndex={0}

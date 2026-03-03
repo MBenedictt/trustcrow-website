@@ -6,7 +6,7 @@ const CTA = () => {
 
     return (
         <section className="py-12 bg-background">
-            <div className="p-12 max-md:p-8 mx-16 max-xl:mx-8 max-md:mx-10 rounded-xl bg-gradient-to-br from-[#286763] to-[rgb(45,104,133)]">
+            <div className="p-12 max-md:p-8 mx-16 max-xl:mx-8 max-md:mx-10 rounded-xl bg-gradient-to-br from-[#286763] to-[rgb(45,104,133)]" data-aos="fade-up">
                 <div className="flex flex-col items-center justify-between gap-8">
 
                     {/* Left Content */}
